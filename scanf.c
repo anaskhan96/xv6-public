@@ -2,45 +2,48 @@
 #include "stat.h"
 #include "user.h"
 
-/*static void
-getc(int fd, char c)
+static void
+getc(int fd, char* c)
 {
-  read(fd, &c, 1);
+  read(fd, c, 1);
+}
+
+int my_atoi(char *str)
+{
+    int res = 0;
+    for (int i = 0; str[i] != '\0'; ++i)
+        res = res*10 + str[i] - '0';
+    return res;
 }
 
 static void
-scanint(int fd, int xx, int base, int sgn)
+scanint(int fd, uint xx, int base, int sgn)
 {
-  static char digits[] = "0123456789ABCDEF";
-  char buf[16];
-  int i, neg;
-  uint x;
-
-  neg = 0;
-  if(sgn && xx < 0){
-    neg = 1;
-    x = -xx;
-  } else {
-    x = xx;
-  }
-
-  i = 0;
+  char *buf = (char*)malloc(sizeof(char)*16);
+  char k;
+  int digits = 0, neg_flag = 0;
   do{
-    buf[i++] = digits[x % base];
-  }while((x /= base) != 0);
-  if(neg)
-    buf[i++] = '-';
+    getc(fd, &k);
+    if(k == '-' && digits == 0){
+    	neg_flag = 1;
+    } else {
+    	*(buf+digits) = k;
+    	digits++;
+    }
+  }while(k != '\n');
+  // Making the last '\n' character a null one 
+  *(buf+digits-1) = '\0';
+  int number = my_atoi(buf);
+  if(neg_flag)
+  	number = -number;
+  int *p = (int*)xx;
+  *p = number;
+}
 
-  while(--i >= 0)
-    getc(fd, buf[i]);
-}*/
-
-// Print to the given fd. Only understands %d, %x, %p, %s.
 void
 scanf(int fd, char *fmt, ...)
 {
-  printf(1,"Not implemented yet");
-  /*char *s;
+  char *s;
   int c, i, state;
   uint *ap;
 
@@ -52,7 +55,7 @@ scanf(int fd, char *fmt, ...)
       if(c == '%'){
         state = '%';
       } else {
-        getc(fd, c);
+        getc(fd, (char*)c);
       }
     } else if(state == '%'){
       if(c == 'd'){
@@ -63,20 +66,25 @@ scanf(int fd, char *fmt, ...)
         ap++;
       } else if(c == 's'){
         s = (char*)*ap;
-        ap++;
+        //ap++;
         if(s == 0)
           s = "(null)";
-        while(*s != 0){
-          getc(fd, *s);
-          s++;
-        }
+        char k;
+        int chars;
+        do{
+          getc(fd, &k);
+          *(s+chars) = k;
+          chars++;
+        }while(k != '\n');
+        // Making the last '\n' character a null one 
+        *(s+chars-1) = '\0';
       } else if(c == 'c'){
-        getc(fd, *ap);
+        getc(fd, (char*)*ap);
         ap++;
       } else if(c == '%'){
-        getc(fd, c);
+        getc(fd, (char*)c);
       }
       state = 0;
     }
-  }*/
+  }
 }

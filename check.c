@@ -3,6 +3,8 @@
 #include "user.h"
 
 int main(){
-  int n;
-  scanf(0,"%d",&n);
+  //char d[5],c[6];
+  int d;
+  scanf(0,"%d",&d);
+  printf(1,"%d",d);
 }
