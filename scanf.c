@@ -10,10 +10,23 @@ getc(int fd, char* c)
 
 int my_atoi(char *str)
 {
-    int res = 0;
-    for (int i = 0; str[i] != '\0'; ++i)
+    int res = 0;  // Initialize result
+    int sign = 1;  // Initialize sign as positive
+    int i = 0;  // Initialize index of first digit
+      
+    // If number is negative, then update sign
+    if (str[0] == '-')
+    {
+        sign = -1;  
+        i++;  // Also update index of first digit
+    }
+      
+    // Iterate through all digits and update the result
+    for (; str[i] != '\0'; ++i)
         res = res*10 + str[i] - '0';
-    return res;
+    
+    // Return result with sign
+    return sign*res;
 }
 
 static void
@@ -21,23 +34,19 @@ scanint(int fd, uint xx, int base, int sgn)
 {
   char *buf = (char*)malloc(sizeof(char)*16);
   char k;
-  int digits = 0, neg_flag = 0;
+  int digits = 0;
   do{
     getc(fd, &k);
-    if(k == '-' && digits == 0){
-    	neg_flag = 1;
-    } else {
-    	*(buf+digits) = k;
-    	digits++;
-    }
+    *(buf+digits) = k;
+    digits++;
   }while(k != '\n');
   // Making the last '\n' character a null one 
   *(buf+digits-1) = '\0';
   int number = my_atoi(buf);
-  if(neg_flag)
-  	number = -number;
-  int *p = (int*)xx;
-  *p = number;
+  if(base == 10){
+  	int *p = (int*)xx;
+  	*p = number;
+  }
 }
 
 void
